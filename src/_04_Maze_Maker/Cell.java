@@ -10,6 +10,8 @@ public class Cell {
 
     private int size = 100;
 
+    Color c = Color.blue;
+    
     private boolean visited;
 
     private boolean northWall;
@@ -30,7 +32,7 @@ public class Cell {
     }
 
     public void draw(Graphics g){
-        g.setColor(Color.BLUE);
+        g.setColor(c);
         g.fillOval((col * size) + (size / 2) + MARGIN, (row * size) + (size / 2) + MARGIN, 4, 4);
 
         g.setColor(Color.RED);

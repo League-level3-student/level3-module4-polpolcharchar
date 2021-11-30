@@ -19,6 +19,10 @@ public class Hangman implements KeyListener {
 	JPanel panel;
 	JLabel label;
 	
+	int lives = 15;
+	
+	Stack<String> words;
+	
 	public static void main(String[] args) {
 		new Hangman().setup();
 		
@@ -27,7 +31,7 @@ public class Hangman implements KeyListener {
 	void setup() {
 		int numWords = Integer.parseInt(JOptionPane.showInputDialog("Enter a number of words"));
 		
-		Stack<String> words = new Stack<>();
+		words = new Stack<>();
 		String testWord = "";
 		
 		
@@ -37,10 +41,10 @@ public class Hangman implements KeyListener {
 				testWord = Utilities.readRandomLineFromFile("dictionary.txt");
 			}
 			words.push(testWord);
-			System.out.println(testWord);
+			//System.out.println(testWord);
 		}
 		
-		currentWord = testWord;
+		currentWord = words.pop();
 		
 		frame = new JFrame();
 		panel = new JPanel();
@@ -53,7 +57,7 @@ public class Hangman implements KeyListener {
 		frame.addKeyListener(this);
 		frame.setVisible(true);
 		
-		label.setText(words.pop());
+		label.setText(currentWord);
 		label.setText(label.getText().replaceAll(".", "_ "));
 	}
 
@@ -66,10 +70,34 @@ public class Hangman implements KeyListener {
 				label.setText(label.getText().substring(0, index * 2) + currentWord.charAt(index) + label.getText().substring(index * 2+1));
 				currentWord = currentWord.substring(0, index) + "_" + currentWord.substring(index + 1);
 			}
+		}else {
+			lives--;
+			System.out.println("Lives: " + lives);
+			if(lives <= 0) {
+				System.out.println("Game Over!");
+				if(JOptionPane.showInputDialog("Play Again?(Y/N)").equalsIgnoreCase("y")) {
+					new Hangman().setup();
+				}else {
+					System.exit(0);
+				}
+			}
 		}
-		System.out.println(currentWord);
-		if(currentWord.replaceAll("^_", " ").equals(currentWord)) {
-			System.out.println("Finished");
+		//System.out.println(currentWord);
+		if(currentWord.replaceAll("_", " ").trim().equals("")) {
+			if(words.size() > 0) {
+				System.out.println(label.getText().replaceAll(" ", ""));
+				currentWord = words.pop();
+				label.setText(currentWord);
+				label.setText(label.getText().replaceAll(".", "_ "));
+				System.out.println("Words Remaining: " + (words.size() + 1));
+				lives = 15;
+				System.out.println("Lives: " + lives);
+			}else {
+				System.out.println(label.getText().replaceAll(" ", ""));
+				System.out.println("You Win!");
+				System.exit(0);
+			}
+			
 		}
 	}
 
